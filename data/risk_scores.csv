@@ -1,0 +1,169 @@
+DEVICE,CVE,Score
+Firewall,CVE-2023-20269,9.1
+Firewall,CVE-2023-20256,5.8
+Firewall,CVE-2023-20247,4.3
+Firewall,CVE-2023-20200,6.3
+Firewall,CVE-2023-20095,8.6
+Firewall,CVE-2023-20015,6.7
+Firewall,CVE-2023-20934,7.8
+Router,CVE-2018-0284,6.5
+Router,CVE-2014-7999,7.7
+Router,CVE-2014-7993,3.3
+Router,CVE-2014-7994,5.4
+Router,CVE-2014-7995,7.2
+Ethernet Switch,CVE-2016-6473,6.5
+Ethernet Switch,CVE-2017-6606,6.4
+Ethernet Switch,CVE-2017-3803,4.7
+Ethernet Switch,CVE-2016-1425,6.5
+Virtulalization Manager Server,CVE-2012-2697,4.9
+Virtulalization Manager Server,CVE-2012-3440,5.6
+Virtulalization Manager Server,CVE-2010-0727,4.9
+Virtulalization Manager Server,CVE-2024-1495,6.5
+Virtulalization Manager Server,CVE-2024-2743,9.1
+Virtulalization Manager Server,CVE-2024-2576,4.3
+Virtulalization Manager Server,CVE-2012-0158,8.8
+Virtulalization Manager Server,CVE-2012-1856,8.8
+Virtulalization Manager Server,CVE-2015-1762,7.1
+Virtulalization Manager Server,CVE-2015-1763,8.5
+Virtulalization Manager Server,CVE-2010-1256,8.5
+Virtulalization Manager Server,CVE-2010-3972,10
+Virtulalization Manager Server,CVE-2022-0547,9.8
+Virtulalization Manager Server,CVE-2020-15078,7.5
+Virtulalization Manager Server,CVE-2020-20813,7.5
+Virtulalization Manager Server,CVE-2017-12166,9.8
+Virtulalization Manager Server,CVE-2017-1000353,9.8
+Virtulalization Manager Server,CVE-2017-1000354,8.8
+Virtulalization Manager Server,CVE-2017-1000356,8.8
+Cybersecurity Capability & Tools server,CVE-2015-7833,4.9
+Cybersecurity Capability & Tools server,CVE-2020-7337,6.7
+Cybersecurity Capability & Tools server,CVE-2009-5118,9.3
+Cybersecurity Capability & Tools server,CVE-2007-2152,7.9
+Cybersecurity Capability & Tools server,CVE-2023-0101,8.8
+Cybersecurity Capability & Tools server,CVE-2021-20135,6.7
+Cybersecurity Capability & Tools server,CVE-2020-5765,5.4
+Cybersecurity Capability & Tools server,CVE-2024-23675,6.5
+Cybersecurity Capability & Tools server,CVE-2024-23676,3.5
+Cybersecurity Capability & Tools server,CVE-2023-40593,7.5
+Cybersecurity Capability & Tools server,CVE-2023-40592,6.1
+Audit Log Server,CVE-2015-7833,4.9
+Virtulalization Manager SAN Archive,CVE-2013-1935,5.7
+Virtulalization Manager SAN Archive,CVE-2013-2224,6.9
+Virtulalization Manager SAN Archive,CVE-2013-2188,4.7
+Layer 2 Switches (Ethernet),CVE-2016-6473,6.5
+Layer 2 Switches (Ethernet),CVE-2017-6606,6.4
+Layer 2 Switches (Ethernet),CVE-2017-3803,4.7
+Layer 2 Switches (Ethernet),CVE-2016-1425,6.5
+"Server Rack, Server #1",CVE-2012-2697,4.9
+"Server Rack, Server #1",CVE-2012-3440,5.6
+"Server Rack, Server #1",CVE-2010-0727,4.9
+"Server Rack, Server #2",CVE-2012-2697,4.9
+"Server Rack, Server #2",CVE-2012-3440,5.6
+"Server Rack, Server #2",CVE-2010-0727,4.9
+"Server Rack, Server #3",CVE-2015-7833,4.9
+"Server Rack, Server #4",CVE-2015-7833,4.9
+"Server Rack, Server #5",CVE-2013-1935,5.7
+"Server Rack, Server #5",CVE-2013-2224,6.9
+"Server Rack, Server #5",CVE-2013-2188,4.7
+"Server Rack, Server #6",CVE-2013-1935,5.7
+"Server Rack, Server #6",CVE-2013-2224,6.9
+"Server Rack, Server #6",CVE-2013-2188,4.7
+"Server Rack, Server #7",CVE-2015-7833,4.9
+"Server Rack, Server #8",CVE-2015-7833,4.9
+"Server Rack, Server #9",CVE-2015-7833,4.9
+"Server Rack, Server #10",CVE-2015-7833,4.9
+"Server Rack, Server #11",CVE-2017-8543,9.8
+"Server Rack, Server #11",CVE-2014-0301,9.3
+"Server Rack, Server #11",CVE-2014-0323,6.6
+"Server Rack, Server #11",CVE-2014-0315,6.9
+"Server Rack, Server #11",CVE-2013-5058,6.9
+"Server Rack, Server #11",CVE-2013-5056,9.3
+"Server Rack, Server #12",CVE-2017-8543,9.8
+"Server Rack, Server #12",CVE-2014-0301,9.3
+"Server Rack, Server #12",CVE-2014-0323,6.6
+"Server Rack, Server #12",CVE-2014-0315,6.9
+"Server Rack, Server #12",CVE-2013-5058,6.9
+"Server Rack, Server #12",CVE-2013-5056,9.3
+Software Development SAN 1,CVE-2012-2697,4.9
+Software Development SAN 1,CVE-2012-3440,5.6
+Software Development SAN 1,CVE-2010-0727,4.9
+Quality Assurance SAN,CVE-2015-7833,4.9
+Company Management SAN,CVE-2012-2697,4.9
+Company Management SAN,CVE-2012-3440,5.6
+Company Management SAN,CVE-2010-0727,4.9
+Software Development (Workstation 1),CVE-2013-1935,5.7
+Software Development (Workstation 1),CVE-2013-2224,6.9
+Software Development (Workstation 1),CVE-2013-2188,4.7
+Software Development (Workstation 1),CVE-2023-47804,8.8
+Software Development (Workstation 1),CVE-2022-37401,8.8
+Software Development (Workstation 1),CVE-2021-33035,7.8
+Software Development (Workstation 1),CVE-2020-13958,7.8
+Software Development (Workstation 1),CVE-2017-12607,7.8
+Software Development (Workstation 2),CVE-2013-1935,5.7
+Software Development (Workstation 2),CVE-2013-2224,6.9
+Software Development (Workstation 2),CVE-2013-2188,4.7
+Software Development (Workstation 2),CVE-2023-47804,8.8
+Software Development (Workstation 2),CVE-2022-37401,8.8
+Software Development (Workstation 2),CVE-2021-33035,7.8
+Software Development (Workstation 2),CVE-2020-13958,7.8
+Software Development (Workstation 2),CVE-2017-12607,7.8
+Software Development (Workstation 3),CVE-2013-1935,5.7
+Software Development (Workstation 3),CVE-2013-2224,6.9
+Software Development (Workstation 3),CVE-2013-2188,4.7
+Software Development (Workstation 3),CVE-2023-47804,8.8
+Software Development (Workstation 3),CVE-2022-37401,8.8
+Software Development (Workstation 3),CVE-2021-33035,7.8
+Software Development (Workstation 3),CVE-2020-13958,7.8
+Software Development (Workstation 3),CVE-2017-12607,7.8
+Software Development (Workstation 4),CVE-2013-1935,5.7
+Software Development (Workstation 4),CVE-2013-2224,6.9
+Software Development (Workstation 4),CVE-2013-2188,4.7
+Software Development (Workstation 4),CVE-2023-47804,8.8
+Software Development (Workstation 4),CVE-2022-37401,8.8
+Software Development (Workstation 4),CVE-2021-33035,7.8
+Software Development (Workstation 4),CVE-2020-13958,7.8
+Software Development (Workstation 4),CVE-2017-12607,7.8
+Software Development (Workstation 5),CVE-2013-1935,5.7
+Software Development (Workstation 5),CVE-2013-2224,6.9
+Software Development (Workstation 5),CVE-2013-2188,4.7
+Software Development (Workstation 5),CVE-2023-47804,8.8
+Software Development (Workstation 5),CVE-2022-37401,8.8
+Software Development (Workstation 5),CVE-2021-33035,7.8
+Software Development (Workstation 5),CVE-2020-13958,7.8
+Software Development (Workstation 5),CVE-2017-12607,7.8
+Software Development (Workstation 6),CVE-2013-1935,5.7
+Software Development (Workstation 6),CVE-2013-2224,6.9
+Software Development (Workstation 6),CVE-2013-2188,4.7
+Software Development (Workstation 6),CVE-2023-47804,8.8
+Software Development (Workstation 6),CVE-2022-37401,8.8
+Software Development (Workstation 6),CVE-2021-33035,7.8
+Software Development (Workstation 6),CVE-2020-13958,7.8
+Software Development (Workstation 6),CVE-2017-12607,7.8
+Quality Assurance (Laptop 1),CVE-2012-2697,4.9
+Quality Assurance (Laptop 1),CVE-2012-3440,5.6
+Quality Assurance (Laptop 1),CVE-2010-0727,4.9
+Quality Assurance (Laptop 1),CVE-2023-47804,8.8
+Quality Assurance (Laptop 1),CVE-2022-37401,8.8
+Quality Assurance (Laptop 1),CVE-2021-33035,7.8
+Quality Assurance (Laptop 1),CVE-2020-13958,7.8
+Quality Assurance (Laptop 1),CVE-2017-12607,7.8
+Quality Assurance (Laptop 2),CVE-2012-2697,4.9
+Quality Assurance (Laptop 2),CVE-2012-3440,5.6
+Quality Assurance (Laptop 2),CVE-2010-0727,4.9
+Quality Assurance (Laptop 2),CVE-2023-47804,8.8
+Quality Assurance (Laptop 2),CVE-2022-37401,8.8
+Quality Assurance (Laptop 2),CVE-2021-33035,7.8
+Quality Assurance (Laptop 2),CVE-2020-13958,7.8
+Quality Assurance (Laptop 2),CVE-2017-12607,7.8
+August Smart Lock Pro,CVE-2019-17098,3.1
+August Smart Lock Pro,CVE-2019-17098,3.1
+August Smart Lock Pro,CVE-2019-17518,6.5
+WAC510 Wireless Access Point,CVE-2018-21133,9.8
+WAC510 Wireless Access Point,CVE-2018-21132,9.8
+WAC510 Wireless Access Point,CVE-2018-21131,9.1
+WAC510 Wireless Access Point,CVE-2018-21130,8.8
+WAC510 Wireless Access Point,CVE-2018-21129,6.5
+WAC510 Wireless Access Point,CVE-2018-21128,8.8
+WAC510 Wireless Access Point,CVE-2018-21127,8.8
+WAC510 Wireless Access Point,CVE-2018-21126,8.8
+WAC510 Wireless Access Point,CVE-2018-21125,8.8
+WAC510 Wireless Access Point,CVE-2018-21124,8.8

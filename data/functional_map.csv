@@ -1,0 +1,35 @@
+Endpoint node name,F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15
+System Administrator Terminal,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0
+Virtulalization Manager Server,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0
+Virtulalization Manager SAN Archive,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0
+Cybersecurity Capability & Tools server,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0
+Audit Log Server,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0
+"Server Rack, Server #1",1,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+"Server Rack, Server #2",1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+"Server Rack, Server #3",0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+"Server Rack, Server #4",0,0,0,1,0,0,0,1,1,0,0,0,0,0,0
+"Server Rack, Server #5",0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+"Server Rack, Server #6",0,0,0,0,0,0,0,0,0,1,0,0,1,0,0
+"Server Rack, Server #7",0,0,0,0,0,0,0,0,0,0,0,1,0,1,0
+"Server Rack, Server #8",0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+"Server Rack, Server #9",0,0,0,1,0,0,0,0,1,0,0,0,0,0,0
+"Server Rack, Server #10",0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+"Server Rack, Server #11",0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+"Server Rack, Server #12",0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+Software Development SAN 1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+Quality Assurance SAN,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0
+Company Management SAN,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1
+Software Development (Workstation 1),1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+Software Development (Workstation 2),0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+Software Development (Workstation 3),0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
+Software Development (Workstation 4),0,0,0,0,0,0,1,0,0,0,1,0,0,0,0
+Quality Assurance (Laptop 1),0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+Quality Assurance (Laptop 2),0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+Company Management (Workstation 5),0,0,0,0,0,0,0,0,0,1,0,0,1,1,1
+Company Management (Workstation 6),0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+Firewall,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+Router,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+Ethernet Switch,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+Layer 2 Switches (Ethernet),3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+August Smart Lock Pro,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+WAC510 Wireless Access Point,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
