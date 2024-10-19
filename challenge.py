@@ -65,7 +65,21 @@ def calculate_overall_score(_final):
     for k in _final.keys():
         tot += _final[k]
     
-    return tot/len(_final.keys())   
+    return tot/len(_final.keys())
+
+# Calculate device based impact based on the formula from NIST SP 800-53
+# risk = (threat x vulnerabilities) x impact
+# risk: cve risk score
+# threat: critical functional score
+# vulnerabilities: overall network score
+def calculate_device_impact(_cfs, _scores, _overall):
+    # impact = risk / (threat * vulnerabilities)
+    _device_impacts = {}
+    for k in _cfs.keys():
+        _device_impacts[k] = (_scores[k] / (_cfs[k] * _overall)) * 100
+    
+    return _device_impacts 
+    
     
 cfs = critical_function_score()
 
@@ -75,6 +89,6 @@ final = calculate_final_score(cfs, scores)
 
 overall = calculate_overall_score(final)
 
-print(f'Node scores: {final}')
+device_impacts = calculate_device_impact(cfs, scores, overall)
 
-print(f'Overall score: {overall}')
+print(f'Device impact scores: {device_impacts}')
