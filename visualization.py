@@ -1,5 +1,7 @@
 # NSWC Cyber Resilliance Challenge Deliverable 2 and demo
+# Desmond Ndambi and Jeff Jenkins
 
+# Import statements
 import math
 import pandas as pd
 import numpy as np
@@ -8,20 +10,15 @@ import gravis as gv
 import os
 import panel as pn
 import html
-import json
 import plotly.express as px
+# load panel extensions
+pn.extension("plotly")
+pn.extension("tabulator")
 
-cve_used = pd.read_csv('./data/cve_used.csv',index_col=False)
-functional_map = pd.read_csv('./data/functional_map.csv',index_col=False)
-functional_scores = pd.read_csv('./data/functional_scores.csv',index_col=False)
-risk_scores = pd.read_csv('./data/risk_scores.csv',index_col=False)
+# Helper functions definitions
 
-def update_visuals(event):    
-    print('HELLO HELLO 213')
-    if not event:
-        return
-
-# Corresponds to column R of Network Elements sheet
+# Critical function score calculates a device specific score based on critical functions provided
+# in the challenge document
 def critical_function_score():
     
     nodes = list(functional_map['Endpoint node name'].values)    
@@ -38,8 +35,8 @@ def critical_function_score():
         _cfs[n] = score
     
     return _cfs
-    
-# Corresponds to Column U of Network Elements sheet
+
+# CVE score calculates the average CVE risk per device based on the tables given in the challenge document
 def cve_score(_ignore_list):
     def check_score(s):
         return (0 if math.isnan(s) else s)
@@ -62,19 +59,21 @@ def cve_score(_ignore_list):
     
     return _scores
 
-# Corresponds to column W from network elements sheet
-def calculate_final_score(_cfs, _scores):
+# Final score assumes equal weight between critical function score and cve score to produce
+# a device specific combined metric
+def calculate_final_score(_cfs, _scores, weights):
     
     _final = {}
-    cfs_weight = .75
-    cve_weight = .25
-    # weighted sum (for now) of critical function score and cve score for each node
+    cfs_weight = weights['cfs']
+    cve_weight = weights['cve']
+    # weighted sum of critical function score and cve score for each device
     for k in _cfs.keys():
         _final[k] = cfs_weight * _cfs[k] + cve_weight * _scores[k]
         
     return _final
 
-# New calculation which is the average score over all components
+# Overall score is a calculation which averages the final score over all devices
+# in the network
 def calculate_overall_score(_final):
     tot = 0
     for k in _final.keys():
@@ -82,7 +81,7 @@ def calculate_overall_score(_final):
     
     return tot/len(_final.keys())
 
-# Calculate device based impact based on the formula from NIST SP 800-53
+# Calculate device based impact using on the formula from NIST SP 800-53
 # risk = (threat x vulnerabilities) x impact
 # risk: cve risk score
 # threat: critical functional score
@@ -95,7 +94,12 @@ def calculate_device_impact(_cfs, _scores, _overall):
     
     return _device_impacts 
 
+# Creates a graph (of nodes and edges) based on the network topology provided
+# in the challenge document
 def create_graph(sd):
+    # We color code nodes with a high score (bigger than 20) red
+    # nodes with medium score (between 10 and 20) yellow 
+    # nodes with a low score (lower than 10) green
     def get_color(node):
         if sd[node] >= 20:
             return 'red'
@@ -104,9 +108,11 @@ def create_graph(sd):
         else:
             return 'green'
 
+    # create a networkx graph
     G=nx.Graph()
 
     node_list = list(sd.keys())
+    # set node color based on our function above, and size based on device impact score
     for n in node_list:
         G.add_node(n, color=get_color(n), size=10+sd[n])
 
@@ -153,117 +159,148 @@ def create_graph(sd):
     G.add_edge("Layer 2 Switches (Ethernet) 3", "Company Management (Workstation 5)")
     G.add_edge("Layer 2 Switches (Ethernet) 3", "Company Management (Workstation 6)")
     
-    return G
+    # Each time we want to refresh the dashboard, we need to recreate the html graph
+    try:
+        os.remove('impact_graph.html')
+    except OSError:
+        pass
+    
+    # Create a 3d rendering of the network graph
+    fig = gv.three(G)
+    fig.export_html('impact_graph.html')    
+
+    HtmlFile = open('impact_graph.html', 'r', encoding='utf-8')
+    source_code = HtmlFile.read()
+    escaped_html = html.escape(source_code)
+    # Create iframe embedding the escaped HTML and display it
+    return pn.pane.HTML(f'<iframe srcdoc="{escaped_html}" style="height:100%; width:100%" frameborder="0"></iframe>', 
+                        height=500, sizing_mode="stretch_width")
+
+def compute_impact_stats(_functional_map, _device_impacts):
+    types = {}
+    types_score = {}
+
+    for k in _device_impacts.keys():
+        v = _functional_map.loc[_functional_map['Endpoint node name'] == k]['Type'].iloc[0]
+        if not v in types:
+            types[v] = 0
+            types_score[v] = []
+        types[v] += 1
+        types_score[v].append(_device_impacts[k])
+    
+    impact_df = pd.DataFrame([[k, device_impacts[k]] for k in _device_impacts.keys()], columns=['Device','Impact Score'])
+    return types, types_score, impact_df
+
+def create_pie_chart(_types):
+    df_data = [[k, _types[k]] for k in _types.keys()]
+    pie_df = pd.DataFrame(df_data, columns=['Type','Count'])
+
+    fig = px.pie(pie_df, values='Count', names='Type')
+    fig.update_layout(
+        title="Device Types",
+        width=500,
+        height=500,
+        margin=dict(t=50, b=50, r=50, l=50),
+    )
+    return pn.pane.Plotly(fig)
+
+def create_info_cards(_overall, _types_score):
+    styles = {
+        "box-shadow": "rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
+        "border-radius": "4px",
+        "padding": "10px",
+    }
+    overall_card = pn.indicators.Number(
+            value=_overall, name="Overall Network Score", format="{value:,.0f}", styles=styles
+    )
+    server_card = pn.indicators.Number(
+            value=np.sum(_types_score['Server'])/len(_types_score['Server']), name="Average Server Score", format="{value:,.0f}", styles=styles
+    )
+    networking_card = pn.indicators.Number(
+            value=np.sum(_types_score['Networking'])/len(_types_score['Networking']), name="Average Networking Score", format="{value:,.0f}", styles=styles
+    )
+    workstation_card = pn.indicators.Number(
+            value=np.sum(_types_score['Workstation'])/len(_types_score['Workstation']), name="Average Workstation Score", format="{value:,.0f}", styles=styles
+    )
+    return overall_card, server_card, networking_card, workstation_card
+
+def create_tables(  _cve_used,
+                    _functional_map,
+                    _functional_scores,
+                    _risk_scores,
+                    _device_impacts_table):
+    return pn.widgets.Tabulator(_cve_used, page_size=20, pagination='local'),\
+        pn.widgets.Tabulator(_functional_map, page_size=20, pagination='local'),\
+        pn.widgets.Tabulator(_functional_scores, page_size=20, pagination='local'),\
+        pn.widgets.Tabulator(_risk_scores, page_size=20, pagination='local'),\
+        pn.widgets.Tabulator(_device_impacts_table, page_size=20, pagination='local')
 
 
-# ****************put in cves to ignore on demo day****************
-cves_to_ignore = [
+# The main program entry point is here :)
+if __name__ == "__main__":
+    
+    # Data loading and filtering code
+    
+    # Load csv data into pandas dataframes
+    cve_used = pd.read_csv('./data/cve_used.csv',index_col=False)
+    functional_map = pd.read_csv('./data/functional_map.csv',index_col=False)
+    functional_scores = pd.read_csv('./data/functional_scores.csv',index_col=False)
+    risk_scores = pd.read_csv('./data/risk_scores.csv',index_col=False)
 
-]
+    # **put in cves to filter/ignore from computation**
+    cves_to_ignore = [
 
-cfs = critical_function_score()
+    ]
+    
+    # Computation code
 
-scores = cve_score(cves_to_ignore)
+    # compute critical function score
+    cfs = critical_function_score()
+    # compute cve score
+    scores = cve_score(cves_to_ignore)
+    # compute final score given cfs and cve scores, with weights for each score
+    final = calculate_final_score(cfs, scores, {'cfs': 0.5, 'cve': 0.5})
+    # compute overall network score given device specific final scores
+    overall = calculate_overall_score(final)
+    # compute device impact given cfs, cve scores, and overall network score
+    device_impacts = calculate_device_impact(cfs, scores, overall)    
+    # compute stats from functional map and device impacts
+    types, types_score, impact_df = compute_impact_stats(functional_map, device_impacts)
+    
+    
+    # Dashboard creation code
+    
+    # generate visual 'impact graph' to be used in the dashboard
+    impact_pane = create_graph(device_impacts)
+    # generate pie chart for types of network elements
+    pie_pane = create_pie_chart(types)
+    # generate info cards for the top of the dashboard
+    overall_card, server_card, networking_card, workstation_card = create_info_cards(overall, types_score)
+    # generate tables for all of our dataframes
+    cve_data_table,functional_map_table,functional_scores_table,risk_scores_table,device_impacts_table = create_tables(cve_used,\
+                                                                                                                        functional_map,\
+                                                                                                                        functional_scores,\
+                                                                                                                        risk_scores,\
+                                                                                                                        impact_df)
+    # create a row to hold the info cards
+    row1 = pn.Row(overall_card,server_card,networking_card,workstation_card)
+    # create a row to hold the pie chart and 3d graph
+    row2 = pn.Row(pie_pane, impact_pane)
+    # create a row with tabs to toggle through the data tables
+    row3 = pn.Tabs(
+        ('Functional Map', functional_map_table), 
+        ('CVE data', cve_data_table),     
+        ('Functional Scores', functional_scores_table), 
+        ('Risk Scores', risk_scores_table),
+        ('Device Impacts', device_impacts_table)
+    )
 
-final = calculate_final_score(cfs, scores)
+    #create a column to hold collapsible panels with our rows
+    dashboard = pn.Column(
+        pn.Accordion(('Info Cards',row1)), 
+        pn.Accordion(('Visualizations',row2)), 
+        pn.Accordion(('Data', row3))
+    )
 
-overall = calculate_overall_score(final)
-
-device_impacts = calculate_device_impact(cfs, scores, overall)
-
-impact_graph = create_graph(device_impacts)
-
-
-# each time we want to refresh the dashboard, we need to recreate the html graph
-impact_graph_html = 'impact_graph.html'
-
-try:
-    os.remove(impact_graph_html)
-except OSError:
-    pass
-fig = gv.three(impact_graph)
-fig.export_html(impact_graph_html)
-
-pn.extension("plotly")
-pn.extension('tabulator')
-
-HtmlFile = open('impact_graph.html', 'r', encoding='utf-8')
-source_code = HtmlFile.read()
-escaped_html = html.escape(source_code)
-# Create iframe embedding the escaped HTML and display it
-iframe_html = f'<iframe srcdoc="{escaped_html}" style="height:100%; width:100%" frameborder="0"></iframe>'
-
-html_pane = pn.pane.HTML(iframe_html, height=500, sizing_mode="stretch_width")
-
-types = {}
-types_score = {}
-
-
-for k in device_impacts.keys():
-    v = functional_map.loc[functional_map['Endpoint node name'] == k]['Type'].iloc[0]
-    if not v in types:
-        types[v] = 0
-        types_score[v] = []
-    types[v] += 1
-    types_score[v].append(device_impacts[k])
-
-df_data = [[k, types[k]] for k in types.keys()]
-df_impact = [[k, device_impacts[k]] for k in device_impacts.keys()]
-
-pie_df = pd.DataFrame(df_data, columns=['Type','Count'])
-impact_df = pd.DataFrame(df_impact, columns=['Device','Impact Score'])
-
-fig = px.pie(pie_df, values='Count', names='Type')
-fig.update_layout(
-    title="Device Types",
-    width=500,
-    height=500,
-    margin=dict(t=50, b=50, r=50, l=50),
-)
-
-pie_chart = pn.pane.Plotly(fig)
-
-styles = {
-    "box-shadow": "rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
-    "border-radius": "4px",
-    "padding": "10px",
-}
-overall_card = pn.indicators.Number(
-        value=overall, name="Overall Network Score", format="{value:,.0f}", styles=styles
-)
-server_card = pn.indicators.Number(
-        value=np.sum(types_score['Server'])/len(types_score['Server']), name="Average Server Score", format="{value:,.0f}", styles=styles
-)
-networking_card = pn.indicators.Number(
-        value=np.sum(types_score['Networking'])/len(types_score['Networking']), name="Average Networking Score", format="{value:,.0f}", styles=styles
-)
-workstation_card = pn.indicators.Number(
-        value=np.sum(types_score['Workstation'])/len(types_score['Workstation']), name="Average Workstation Score", format="{value:,.0f}", styles=styles
-)
-
-row1 = pn.Row(overall_card,server_card,networking_card,workstation_card)
-row2 = pn.Row(pie_chart, html_pane)
-
-cve_data_table = pn.widgets.Tabulator(cve_used, page_size=20, pagination='local')
-functional_map_table = pn.widgets.Tabulator(functional_map, page_size=20, pagination='local')
-functional_scores_table= pn.widgets.Tabulator(functional_scores, page_size=20, pagination='local')
-risk_scores_table = pn.widgets.Tabulator(risk_scores, page_size=20, pagination='local')
-device_impacts_table = pn.widgets.Tabulator(impact_df, page_size=20, pagination='local')
-
-row3 = pn.Tabs(
-    ('Functional Map', functional_map_table), 
-    ('CVE data', cve_data_table),     
-    ('Functional Scores', functional_scores_table), 
-    ('Risk Scores', risk_scores_table),
-    ('Device Impacts', device_impacts_table)
-)
-
-fbox = pn.Column(
-    pn.Accordion(('Info Cards',row1)), 
-    pn.Accordion(('Visualizations',row2)), 
-    pn.Accordion(('Data', row3))
-)
-
-
-pn.serve(fbox)
-
+    # serve the dashboard to the web browser
+    pn.serve(dashboard)
