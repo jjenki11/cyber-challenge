@@ -265,5 +265,5 @@ fbox = pn.Column(
 )
 
 
-fbox.servable()
+pn.serve(fbox)
 
