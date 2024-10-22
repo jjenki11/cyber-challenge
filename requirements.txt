@@ -1,3 +1,6 @@
 numpy==1.23.1
 numpydoc==1.1.0
 pandas==1.0.5
+gravis
+panel
+plotly
