@@ -1,7 +1,25 @@
+# NSWC Cyber Resilliance Challenge Deliverable 2 and demo
+
+import math
+import pandas as pd
+import numpy as np
+import networkx as nx
+import gravis as gv
+import os
+import panel as pn
+import html
+import json
+import plotly.express as px
+
 cve_used = pd.read_csv('./data/cve_used.csv',index_col=False)
 functional_map = pd.read_csv('./data/functional_map.csv',index_col=False)
 functional_scores = pd.read_csv('./data/functional_scores.csv',index_col=False)
 risk_scores = pd.read_csv('./data/risk_scores.csv',index_col=False)
+
+def update_visuals(event):    
+    print('HELLO HELLO 213')
+    if not event:
+        return
 
 # Corresponds to column R of Network Elements sheet
 def critical_function_score():
@@ -138,12 +156,11 @@ def create_graph(sd):
     return G
 
 
-# put in cves to ignore on demo day
+# ****************put in cves to ignore on demo day****************
 cves_to_ignore = [
-   
+
 ]
-    
-    
+
 cfs = critical_function_score()
 
 scores = cve_score(cves_to_ignore)
@@ -156,7 +173,97 @@ device_impacts = calculate_device_impact(cfs, scores, overall)
 
 impact_graph = create_graph(device_impacts)
 
-gv.vis(impact_graph)
-# fig.export_jpg('impact_graph.jpg')
 
+# each time we want to refresh the dashboard, we need to recreate the html graph
+impact_graph_html = 'impact_graph.html'
+
+try:
+    os.remove(impact_graph_html)
+except OSError:
+    pass
+fig = gv.three(impact_graph)
+fig.export_html(impact_graph_html)
+
+pn.extension("plotly")
+pn.extension('tabulator')
+
+HtmlFile = open('impact_graph.html', 'r', encoding='utf-8')
+source_code = HtmlFile.read()
+escaped_html = html.escape(source_code)
+# Create iframe embedding the escaped HTML and display it
+iframe_html = f'<iframe srcdoc="{escaped_html}" style="height:100%; width:100%" frameborder="0"></iframe>'
+
+html_pane = pn.pane.HTML(iframe_html, height=500, sizing_mode="stretch_width")
+
+types = {}
+types_score = {}
+
+
+for k in device_impacts.keys():
+    v = functional_map.loc[functional_map['Endpoint node name'] == k]['Type'].iloc[0]
+    if not v in types:
+        types[v] = 0
+        types_score[v] = []
+    types[v] += 1
+    types_score[v].append(device_impacts[k])
+
+df_data = [[k, types[k]] for k in types.keys()]
+df_impact = [[k, device_impacts[k]] for k in device_impacts.keys()]
+
+pie_df = pd.DataFrame(df_data, columns=['Type','Count'])
+impact_df = pd.DataFrame(df_impact, columns=['Device','Impact Score'])
+
+fig = px.pie(pie_df, values='Count', names='Type')
+fig.update_layout(
+    title="Device Types",
+    width=500,
+    height=500,
+    margin=dict(t=50, b=50, r=50, l=50),
+)
+
+pie_chart = pn.pane.Plotly(fig)
+
+styles = {
+    "box-shadow": "rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
+    "border-radius": "4px",
+    "padding": "10px",
+}
+overall_card = pn.indicators.Number(
+        value=overall, name="Overall Network Score", format="{value:,.0f}", styles=styles
+)
+server_card = pn.indicators.Number(
+        value=np.sum(types_score['Server'])/len(types_score['Server']), name="Average Server Score", format="{value:,.0f}", styles=styles
+)
+networking_card = pn.indicators.Number(
+        value=np.sum(types_score['Networking'])/len(types_score['Networking']), name="Average Networking Score", format="{value:,.0f}", styles=styles
+)
+workstation_card = pn.indicators.Number(
+        value=np.sum(types_score['Workstation'])/len(types_score['Workstation']), name="Average Workstation Score", format="{value:,.0f}", styles=styles
+)
+
+row1 = pn.Row(overall_card,server_card,networking_card,workstation_card)
+row2 = pn.Row(pie_chart, html_pane)
+
+cve_data_table = pn.widgets.Tabulator(cve_used, page_size=20, pagination='local')
+functional_map_table = pn.widgets.Tabulator(functional_map, page_size=20, pagination='local')
+functional_scores_table= pn.widgets.Tabulator(functional_scores, page_size=20, pagination='local')
+risk_scores_table = pn.widgets.Tabulator(risk_scores, page_size=20, pagination='local')
+device_impacts_table = pn.widgets.Tabulator(impact_df, page_size=20, pagination='local')
+
+row3 = pn.Tabs(
+    ('Functional Map', functional_map_table), 
+    ('CVE data', cve_data_table),     
+    ('Functional Scores', functional_scores_table), 
+    ('Risk Scores', risk_scores_table),
+    ('Device Impacts', device_impacts_table)
+)
+
+fbox = pn.Column(
+    pn.Accordion(('Info Cards',row1)), 
+    pn.Accordion(('Visualizations',row2)), 
+    pn.Accordion(('Data', row3))
+)
+
+
+fbox.servable()
 
