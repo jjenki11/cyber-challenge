@@ -96,7 +96,7 @@ def calculate_device_impact(_cfs, _scores, _overall):
 
 # Creates a graph (of nodes and edges) based on the network topology provided
 # in the challenge document
-def create_graph(sd):
+def create_graph(sd, n_graph):
     # We color code nodes with a high score (bigger than 20) red
     # nodes with medium score (between 10 and 20) yellow 
     # nodes with a low score (lower than 10) green
@@ -116,48 +116,8 @@ def create_graph(sd):
     for n in node_list:
         G.add_node(n, color=get_color(n), size=10+sd[n])
 
-    # Add edges from network topology
-    G.add_edge("Internet", "Firewall")
-    G.add_edge("Firewall", "Router")
-
-    G.add_edge("Router", "Layer 2 Switches (Ethernet) 1")
-    G.add_edge("Router", "Layer 2 Switches (Ethernet) 2")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Layer 2 Switches (Ethernet) 3")
-    G.add_edge("Layer 2 Switches (Ethernet) 3", "WAC510 Wireless Access Point")
-
-    G.add_edge("WAC510 Wireless Access Point", "Quality Assurance (Laptop 1)")
-    G.add_edge("WAC510 Wireless Access Point", "Quality Assurance (Laptop 2)")
-    G.add_edge("WAC510 Wireless Access Point", "August Smart Lock Pro")
-
-    G.add_edge("Layer 2 Switches (Ethernet) 1", "System Administrator Terminal")
-    G.add_edge("Layer 2 Switches (Ethernet) 1", "Virtulalization Manager Server")
-    G.add_edge("Layer 2 Switches (Ethernet) 1", "Virtulalization Manager SAN Archive")
-    G.add_edge("Layer 2 Switches (Ethernet) 1", "Cybersecurity Capability & Tools server")
-    G.add_edge("Layer 2 Switches (Ethernet) 1", "Audit Log Server")
-
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Software Development (Workstation 1)")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Software Development (Workstation 2)")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Software Development (Workstation 3)")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Software Development (Workstation 4)")
-
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #1")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #2")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #3")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #4")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #5")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #6")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #7")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #8")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #9")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #10")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #11")
-    G.add_edge("Layer 2 Switches (Ethernet) 2", "Server Rack, Server #12")
-
-    G.add_edge("Layer 2 Switches (Ethernet) 3", "Software Development SAN 1")
-    G.add_edge("Layer 2 Switches (Ethernet) 3", "Quality Assurance SAN")
-    G.add_edge("Layer 2 Switches (Ethernet) 3", "Company Management SAN")
-    G.add_edge("Layer 2 Switches (Ethernet) 3", "Company Management (Workstation 5)")
-    G.add_edge("Layer 2 Switches (Ethernet) 3", "Company Management (Workstation 6)")
+    for index, row in n_graph.iterrows():
+        G.add_edge(row['TO'], row['FROM'])
     
     # Each time we want to refresh the dashboard, we need to recreate the html graph
     try:
@@ -242,10 +202,11 @@ if __name__ == "__main__":
     # Data loading and filtering code
     
     # Load csv data into pandas dataframes
-    cve_used = pd.read_csv('./data/cve_used.csv',index_col=False)
-    functional_map = pd.read_csv('./data/functional_map.csv',index_col=False)
-    functional_scores = pd.read_csv('./data/functional_scores.csv',index_col=False)
-    risk_scores = pd.read_csv('./data/risk_scores.csv',index_col=False)
+    cve_used = pd.read_csv('./data/0_1/cve_used.csv',index_col=False)
+    functional_map = pd.read_csv('./data/0_1/functional_map.csv',index_col=False)
+    functional_scores = pd.read_csv('./data/0_1/functional_scores.csv',index_col=False)
+    risk_scores = pd.read_csv('./data/0_1/risk_scores.csv',index_col=False)
+    network_graph = pd.read_csv('./data/0_1/network_graph.csv',index_col=False)
 
     # **put in cves to filter/ignore from computation**
     cves_to_ignore = [
@@ -271,7 +232,7 @@ if __name__ == "__main__":
     # Dashboard creation code
     
     # generate visual 'impact graph' to be used in the dashboard
-    impact_pane = create_graph(device_impacts)
+    impact_pane = create_graph(device_impacts, network_graph)
     # generate pie chart for types of network elements
     pie_pane = create_pie_chart(types)
     # generate info cards for the top of the dashboard
