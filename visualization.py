@@ -17,6 +17,10 @@ pn.extension("tabulator")
 
 # Helper functions definitions
 
+# Check a score value for nan and return 0 if it is not a number
+def check_score(s):
+    return (0 if (math.isinf(s) or math.isnan(s)) else s)
+
 # Critical function score calculates a device specific score based on critical functions provided
 # in the challenge document
 def critical_function_score():
@@ -38,9 +42,7 @@ def critical_function_score():
 
 # CVE score calculates the average CVE risk per device based on the tables given in the challenge document
 def cve_score(_ignore_list):
-    def check_score(s):
-        return (0 if math.isnan(s) else s)
-    
+    # perform set difference
     def get_difference(l1, l2):
         return list(set(l1) - set(l2))
     
@@ -90,7 +92,8 @@ def calculate_device_impact(_cfs, _scores, _overall):
     # impact = risk / (threat * vulnerabilities)
     _device_impacts = {}
     for k in _cfs.keys():
-        _device_impacts[k] = (_scores[k] / (_cfs[k] * _overall)) * 100
+        
+        _device_impacts[k] = check_score((_scores[k] / (_cfs[k] * _overall))) * 100
     
     return _device_impacts 
 
@@ -171,16 +174,16 @@ def create_info_cards(_overall, _types_score):
         "padding": "10px",
     }
     overall_card = pn.indicators.Number(
-            value=_overall, name="Overall Network Score", format="{value:,.0f}", styles=styles
+            value=_overall, name="Overall Network Score", format="{value:,.2f}", styles=styles
     )
     server_card = pn.indicators.Number(
-            value=np.sum(_types_score['Server'])/len(_types_score['Server']), name="Average Server Score", format="{value:,.0f}", styles=styles
+            value=np.sum(_types_score['Server'])/len(_types_score['Server']), name="Average Server Score", format="{value:,.2f}", styles=styles
     )
     networking_card = pn.indicators.Number(
-            value=np.sum(_types_score['Networking'])/len(_types_score['Networking']), name="Average Networking Score", format="{value:,.0f}", styles=styles
+            value=np.sum(_types_score['Networking'])/len(_types_score['Networking']), name="Average Networking Score", format="{value:,.2f}", styles=styles
     )
     workstation_card = pn.indicators.Number(
-            value=np.sum(_types_score['Workstation'])/len(_types_score['Workstation']), name="Average Workstation Score", format="{value:,.0f}", styles=styles
+            value=np.sum(_types_score['Workstation'])/len(_types_score['Workstation']), name="Average Workstation Score", format="{value:,.2f}", styles=styles
     )
     return overall_card, server_card, networking_card, workstation_card
 
@@ -201,16 +204,28 @@ if __name__ == "__main__":
     
     # Data loading and filtering code
     
+    system_name = 'sue_2' # sue_1 or sue_2
+    
+    patch_version = 'patch' # base or path
+    
     # Load csv data into pandas dataframes
-    cve_used = pd.read_csv('./data/0_1/cve_used.csv',index_col=False)
-    functional_map = pd.read_csv('./data/0_1/functional_map.csv',index_col=False)
-    functional_scores = pd.read_csv('./data/0_1/functional_scores.csv',index_col=False)
-    risk_scores = pd.read_csv('./data/0_1/risk_scores.csv',index_col=False)
-    network_graph = pd.read_csv('./data/0_1/network_graph.csv',index_col=False)
+    cve_used = pd.read_csv(f'./data/{system_name}_{patch_version}/cve_used.csv',index_col=False)
+    functional_map = pd.read_csv(f'./data/{system_name}_{patch_version}/functional_map.csv',index_col=False)
+    functional_scores = pd.read_csv(f'./data/{system_name}_{patch_version}/functional_scores.csv',index_col=False)
+    risk_scores = pd.read_csv(f'./data/{system_name}_{patch_version}/risk_scores.csv',index_col=False)
+    network_graph = pd.read_csv(f'./data/{system_name}_{patch_version}/network_graph.csv',index_col=False)
 
     # **put in cves to filter/ignore from computation**
     cves_to_ignore = [
-
+        'CVE-2012-2697',
+        'CVE-2012-3440',
+        'CVE-2015-7833',
+        'CVE-2012-2697',
+        'CVE-2013-2224',
+        'CVE-2013-2188',
+        'CVE-2010-0727',
+        'CVE-2013-1935',
+        'CVE-2024-23676'
     ]
     
     # Computation code
